@@ -1,22 +1,26 @@
-const express = require("express");
+const express = require('express');
+const { adminAuth, userAuth } = require('./middlewares/auth');
 
 const app = express();
 
-app.use('/user', (req, res, next)=>{
-    console.log("hello 1");
-    next()
+app.use('/admin', adminAuth)
+
+app.get('/admin', (req, res) => {
+  res.send('Admin route');
+});
+
+app.post('/user', (req, res)=>{
+  res.send('log in')
 })
 
-app.use('/user', (req, res, next)=>{
-    next()
-    console.log("hello 2")
-    res.send("hello 2")
-})
-app.use('/user', (req, res, next)=>{
-    console.log("hello 3")
+app.use('/user', userAuth)
+
+app.get('/user', (req, res)=>{
+  res.send('user list')
 })
 
-app.listen(3000, ()=>{
-    console.log("The server is running at port 3000");
-    
+
+
+app.listen(3000,()=>{
+  console.log("The server is running on port 3000")
 })
