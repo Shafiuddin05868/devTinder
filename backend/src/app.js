@@ -4,20 +4,14 @@ import { User } from "./models/user.js";
 
 const app = express();
 
+app.use(express.json());
 app.post("/signUp", async (req, res) => {
-  const user = new User({
-    name: "Shafiuddin Chowdury",
-    email: "shafiuddin05868@yandex.com",
-    password: "dkf84359348AKDSJF@$##@",
-    phone: 8801799979556,
-    age: 23,
-    gender: "male",
-  });
+  const user = new User(req.body);
   try {
     await user.save();
     res.send("user create successfully");
   } catch (err) {
-    res.status(400).send("failed to save user", err);
+    res.status(400).send(err.message);
   }
 });
 //connect database and start server
