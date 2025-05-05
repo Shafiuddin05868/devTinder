@@ -23,24 +23,36 @@ app.get("/users", async (req, res) => {
     const filter = {}
 
     //filters query parameters keys from the schema
-    const keys = Object.keys(userSchema.obj).filter(key => key !== 'password')
+    const keys = Object.keys(userSchema.obj).filter((key) => key !== "password")
     const queries = Object.keys(req.query) //get all query parameters
-    queries.forEach(query => { //if the query parameters are in the schema keys then add it to the filter object
-        if(keys.includes(query)){
-            filter[query] = req.query[query]
-        }
+    queries.forEach((query) => {
+      //if the query parameters are in the schema keys then add it to the filter object
+      if (keys.includes(query)) {
+        filter[query] = req.query[query]
+      }
     })
-
-    if(Object.keys(filter).length > 0 ){
-        const users = await User.find(filter)
-        users.length > 0 ? res.send(users) : res.status(404).send("No user found")
-    }else{
-        const users = await User.find()
-        res.send(users)
+    //if there are any queries then add filter if not then send all users
+    if (Object.keys(filter).length > 0) {
+      const users = await User.find(filter)
+      users.length > 0 ? res.send(users) : res.status(404).send("No user found")
+    } else {  //no filter get all users
+      const users = await User.find()
+      res.send(users)
     }
   } catch (err) {
     console.error(err.message)
     res.status(500).send("Server error")
+  }
+})
+
+//get single user
+app.get("/users/:id", async(req, res)=>{
+  try{
+    const user = await User.findById(req.params.id)
+    user > 0 ? res.send(user) : res.status(404).send("No user found")
+  } catch(err){
+    console.error(err.message)
+    res.status(500).send("server error")
   }
 })
 
