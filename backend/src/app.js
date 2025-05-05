@@ -1,6 +1,6 @@
 import express from "express"
 import { databaseConnect } from "./config/database.js"
-import { User } from "./models/user.js"
+import { User, userSchema } from "./models/user.js"
 
 const app = express()
 
@@ -21,15 +21,15 @@ app.post("/signUp", async (req, res) => {
 app.get("/users", async (req, res) => {
   try {
     const filter = {}
-    if(req.query.email){
-        filter.email = req.query.email
-    }
-    if(req.query.name){
-        filter.name = req.query.name
-    }
-    if(req.query.age){
-        filter.age = req.query.age
-    }
+
+    //filters query parameters keys from the schema
+    const keys = Object.keys(userSchema.obj).filter(key => key !== 'password')
+    const queries = Object.keys(req.query) //get all query parameters
+    queries.forEach(query => { //if the query parameters are in the schema keys then add it to the filter object
+        if(keys.includes(query)){
+            filter[query] = req.query[query]
+        }
+    })
 
     if(Object.keys(filter).length > 0 ){
         const users = await User.find(filter)
