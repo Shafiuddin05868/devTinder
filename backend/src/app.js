@@ -35,7 +35,8 @@ app.get("/users", async (req, res) => {
     if (Object.keys(filter).length > 0) {
       const users = await User.find(filter)
       users.length > 0 ? res.send(users) : res.status(404).send("No user found")
-    } else {  //no filter get all users
+    } else {
+      //no filter get all users
       const users = await User.find()
       res.send(users)
     }
@@ -46,13 +47,39 @@ app.get("/users", async (req, res) => {
 })
 
 //get single user
-app.get("/users/:id", async(req, res)=>{
-  try{
+app.get("/users/:id", async (req, res) => {
+  try {
     const user = await User.findById(req.params.id)
-    user > 0 ? res.send(user) : res.status(404).send("No user found")
-  } catch(err){
+    user ? res.send(user) : res.status(404).send("No user found")
+  } catch (err) {
     console.error(err.message)
-    res.status(500).send("server error")
+    res.status(500).send("server error or invalid id")
+  }
+})
+
+// delete user
+app.delete("/user/:id", async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id)
+    user
+      ? res.send("user deleted successfully")
+      : res.status(404).send("No user found")
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send("Server error or invalid id")
+  }
+})
+
+//update user
+app.patch("/user/:id", async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    })
+    user ? res.send(user) : res.status(404).send("No user found")
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send("Server error or invalid id")
   }
 })
 
