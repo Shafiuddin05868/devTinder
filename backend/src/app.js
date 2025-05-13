@@ -73,6 +73,10 @@ app.delete("/user/:id", async (req, res) => {
 //update user
 app.patch("/user/:id", async (req, res) => {
   try {
+
+    //impliment api validation
+    const keys = Object.keys(userSchema.obj).filter((key) => key !== "password")
+
     const user = await User.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,

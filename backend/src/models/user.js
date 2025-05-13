@@ -53,9 +53,9 @@ export const userSchema = new mongoose.Schema({
     type: [String],
     validate: {
       validator: function (value) {
-        return value.length > 0
+        return value.length > 0 && value.length < 10
       },
-      message: "At least one skill is required",
+      message: "At least one skill is required and maximum 10",
     },
   }
 }, {
