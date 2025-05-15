@@ -1,6 +1,7 @@
 import express from "express"
 import { databaseConnect } from "./config/database.js"
 import { User, userSchema } from "./models/user.js"
+import { validate } from "./utils/validate.js"
 
 const app = express()
 
@@ -73,6 +74,8 @@ app.delete("/user/:id", async (req, res) => {
 //update user
 app.patch("/user/:id", async (req, res) => {
   try {
+
+    validate(req)
 
     //impliment api validation
     const keys = Object.keys(userSchema.obj).filter((key) => key !== "password")
