@@ -2,6 +2,7 @@ import express from "express"
 import { databaseConnect } from "./config/database.js"
 import { User, userSchema } from "./models/user.js"
 import { validate } from "./utils/validate.js"
+import bcrypt from "bcrypt"
 
 const app = express()
 
@@ -10,12 +11,21 @@ app.use(express.json())
 //user sign up
 app.post("/signUp", async (req, res) => {
   const user = new User(req.body)
-  try {
-    await user.save()
-    res.send("user create successfully")
-  } catch (err) {
-    res.status(400).send(err.message)
-  }
+
+  bcrypt.hash(user.password, 10, async (err, hash) => {
+    if (err) {
+      return res.status(500).send("Internal server error")
+    }
+
+    user.password = hash
+
+    try {
+      await user.save()
+      res.send("user create successfully")
+    } catch (err) {
+      res.status(400).send(err.message)
+    }
+  })
 })
 
 //get all users
