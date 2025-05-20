@@ -28,6 +28,32 @@ app.post("/signUp", async (req, res) => {
   })
 })
 
+//user login
+app.post("/login", async (req, res) => {
+  try {
+        console.log("Request body:", req.body) // Log the request body
+    if(!req.body.email || !req.body.password){
+      return res.status(400).send("email and password are required")
+    }
+    const user = await User.findOne({email: req.body.email})
+    if(!user){
+      return res.status(404).send("invalid credential")
+    }
+    bcrypt.compare(req.body.password, user.password, (err, result)=>{
+      if(err){
+        return res.status(500).send("internal server error")
+      }
+      if(result){
+        res.status(200).send(user)
+      }else{
+        res.status(404).send("invalid credential")
+      }
+    })
+  } catch (err) {
+    res.send("internal server error: " + err.message)
+  }
+})
+
 //get all users
 app.get("/users", async (req, res) => {
   try {
@@ -96,7 +122,6 @@ app.patch("/user/:id", async (req, res) => {
     })
     user ? res.send(user) : res.status(404).send("No user found")
   } catch (err) {
-    console.error(err.message)
     res.status(500).send(err.message)
   }
 })

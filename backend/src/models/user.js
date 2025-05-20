@@ -27,12 +27,10 @@ export const userSchema = new mongoose.Schema(
     },
     phone: {
       type: Number,
-      validate: {
-        validator: function (value) {
-          return /^\d{10}$/.test(value)
-        },
-        message: "Invalid phone number",
-      },
+      required: true,
+      unique: true,
+      minLength: [10, "Phone number must be at least 10 characters long"],
+      maxLength: [20, "Phone number is invalid"],
     },
     age: {
       type: Number,
