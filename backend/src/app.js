@@ -11,6 +11,7 @@ app.use(express.json())
 //user sign up
 app.post("/signUp", async (req, res) => {
   const user = new User(req.body)
+  validate(req)
 
   bcrypt.hash(user.password, 10, async (err, hash) => {
     if (err) {
