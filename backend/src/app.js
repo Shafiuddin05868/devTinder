@@ -44,11 +44,11 @@ app.get("/users", async (req, res) => {
     })
     //if there are any queries then add filter if not then send all users
     if (Object.keys(filter).length > 0) {
-      const users = await User.find(filter)
+      const users = await User.find(filter).select("-password")
       users.length > 0 ? res.send(users) : res.status(404).send("No user found")
     } else {
       //no filter get all users
-      const users = await User.find()
+      const users = await User.find().select("-password")
       res.send(users)
     }
   } catch (err) {
@@ -60,7 +60,7 @@ app.get("/users", async (req, res) => {
 //get single user
 app.get("/users/:id", async (req, res) => {
   try {
-    const user = await User.findById(req.params.id)
+    const user = await User.findById(req.params.id).select("-password")
     user ? res.send(user) : res.status(404).send("No user found")
   } catch (err) {
     console.error(err.message)
