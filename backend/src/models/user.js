@@ -38,7 +38,7 @@ export const userSchema = new mongoose.Schema(
       type: Number,
       validate: {
         validator: function (value) {
-          return value >= 18
+          return value >= 10
         },
         message: "Age must be at least 18",
       },
