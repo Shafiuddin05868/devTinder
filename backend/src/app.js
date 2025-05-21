@@ -2,11 +2,16 @@ import express from "express"
 import { databaseConnect } from "./config/database.js"
 import { User, userSchema } from "./models/user.js"
 import { validate } from "./utils/validate.js"
+import cookieParser from "cookie-parser"
+import jwt from "jsonwebtoken"
+import ms from "ms"
+import dotenv from "dotenv"
 import bcrypt from "bcrypt"
 
 const app = express()
 
 app.use(express.json())
+app.use(cookieParser())
 
 //user sign up
 app.post("/signUp", async (req, res) => {
@@ -32,21 +37,31 @@ app.post("/signUp", async (req, res) => {
 //user login
 app.post("/login", async (req, res) => {
   try {
-        console.log("Request body:", req.body) // Log the request body
-    if(!req.body.email || !req.body.password){
+    if (!req.body.email || !req.body.password) {
       return res.status(400).send("email and password are required")
     }
-    const user = await User.findOne({email: req.body.email})
-    if(!user){
+    const user = await User.findOne({ email: req.body.email })
+    if (!user) {
       return res.status(404).send("invalid credential")
     }
-    bcrypt.compare(req.body.password, user.password, (err, result)=>{
-      if(err){
+    bcrypt.compare(req.body.password, user.password, (err, result) => {
+      if (err) {
         return res.status(500).send("internal server error")
       }
-      if(result){
-        res.status(200).send(user)
-      }else{
+      if (result) {
+        //create jwt token
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+          expiresIn: process.env.JWT_EXPIRATION,
+        })
+        // add the token to the cookie and send it to the client
+        res.cookie("token", token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          maxAge: ms(process.env.JWT_EXPIRATION), // convert to milliseconds
+        })
+
+        res.status(200).send("user logged in successfully")
+      } else {
         res.status(404).send("invalid credential")
       }
     })
@@ -111,7 +126,6 @@ app.delete("/user/:id", async (req, res) => {
 //update user
 app.patch("/user/:id", async (req, res) => {
   try {
-
     validate(req)
 
     //impliment api validation
