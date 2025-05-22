@@ -70,6 +70,25 @@ app.post("/login", async (req, res) => {
   }
 })
 
+//profile
+app.get("/profile", async (req, res) => {
+  try {
+    const token = req.cookies.token
+    if (!token) {
+      return res.status(401).send("Please login to access this page")
+    }
+    jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+      if (err) {
+        return res.status(401).send("unauthorized")
+      }
+      const user = await User.findById(decoded.id).select("-password")
+      user ? res.send(user) : res.status(404).send("No user found")
+    })
+  } catch (err) {
+    res.status(500).send("internal server error: " + err.message)
+  }
+})
+
 //get all users
 app.get("/users", async (req, res) => {
   try {
