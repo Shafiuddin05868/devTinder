@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken"
 import ms from "ms"
 import dotenv from "dotenv"
 import bcrypt from "bcrypt"
+import { userAuth } from "./middlewares/auth.js"
 
 const app = express()
 
@@ -71,19 +72,9 @@ app.post("/login", async (req, res) => {
 })
 
 //profile
-app.get("/profile", async (req, res) => {
+app.get("/profile", userAuth, async (req, res) => {
   try {
-    const token = req.cookies.token
-    if (!token) {
-      return res.status(401).send("Please login to access this page")
-    }
-    jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
-      if (err) {
-        return res.status(401).send("unauthorized")
-      }
-      const user = await User.findById(decoded.id).select("-password")
-      user ? res.send(user) : res.status(404).send("No user found")
-    })
+    res.status(200).send(req.user)
   } catch (err) {
     res.status(500).send("internal server error: " + err.message)
   }
