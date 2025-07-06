@@ -48,9 +48,7 @@ app.post("/login", async (req, res) => {
     const result = await user.comparePassword(req.body.password)
       if (result) {
         //create jwt token
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-          expiresIn: process.env.JWT_EXPIRATION,
-        })
+        const token = user.createJwtToken()
         // add the token to the cookie and send it to the client
         res.cookie("token", token, {
           httpOnly: true,
