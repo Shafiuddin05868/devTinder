@@ -4,16 +4,16 @@ export const userAuth = async (req, res, next) => {
   try {
     const token = req.cookies.token;
     if (!token){
-        res.status(401).send("unauthorized")
+        throw new Error("unauthorized")
     }
     jwt.verify(token, process.env.JWT_SECRET, async(err, decoded)=>{
         if (err){
-            res.status(401).send("unauthorized")
+            throw new Error("unauthorized")
         }else{
             const {id} = decoded
             const user = await User.findById(id).select("-password")
             if(!user){
-                res.status(401).send("unauthorized")
+                throw new Error("unauthorized")
             }
             req.user = user
             next()
