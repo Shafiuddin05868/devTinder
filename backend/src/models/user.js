@@ -1,5 +1,6 @@
 import mongoose from "mongoose"
 import validator from "validator"
+import bcrypt from "bcrypt"
 
 export const userSchema = new mongoose.Schema(
   {
@@ -62,5 +63,13 @@ export const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 )
+userSchema.methods.comparePassword = function (passwordInsertedByUser){
+  return  bcrypt.compare(passwordInsertedByUser, this.password, (err, result) => {
+     if (err) {
+        throw new Error(err.message)
+      }
+    return result
+  })
+}
 
 export const User = mongoose.model("User", userSchema)

@@ -45,10 +45,7 @@ app.post("/login", async (req, res) => {
     if (!user) {
       return res.status(404).send("invalid credential")
     }
-    bcrypt.compare(req.body.password, user.password, (err, result) => {
-      if (err) {
-        return res.status(500).send("internal server error")
-      }
+    const result = await user.comparePassword(req.body.password)
       if (result) {
         //create jwt token
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -65,9 +62,9 @@ app.post("/login", async (req, res) => {
       } else {
         res.status(404).send("invalid credential")
       }
-    })
+
   } catch (err) {
-    res.send("internal server error: " + err.message)
+    res.status(500).send("internal server error: " + err.message)
   }
 })
 
