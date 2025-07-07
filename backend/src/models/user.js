@@ -16,16 +16,21 @@ export const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
-      // validate: {
-      //   validator: (value) => {
-      //     return validator.isEmail(value)
-      //   },
-      // },
+      validate: {
+        validator: (value) => {
+          return validator.isEmail(value)
+        },
+      },
     },
     password: {
       type: String,
       required: true,
       minLength: [8, "Password must be at least 8 characters long"],
+    },
+    photoUrl: {
+      type: String,
+      accept: [".png",".jpg",".jpeg",".svg"],
+      default: "https://res.cloudinary.com/dh7v3x90z/image/upload/v1692868497/avatar/default_avatar.png",
     },
     phone: {
       type: Number,
