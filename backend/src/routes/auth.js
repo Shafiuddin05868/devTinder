@@ -43,6 +43,7 @@ authRouter.post("/login", async (req, res) => {
         // add the token to the cookie and send it to the client
         res.cookie("token", token, {
           httpOnly: true,
+          sameSite: "strict",
           secure: process.env.NODE_ENV === "production",
           maxAge: ms(process.env.JWT_EXPIRATION), // convert to milliseconds
         })
@@ -55,6 +56,16 @@ authRouter.post("/login", async (req, res) => {
   } catch (err) {
     res.status(500).send("internal server error: " + err.message)
   }
+})
+
+//user logout
+authRouter.post("/logout", (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  })
+  res.status(200).send("user logged out successfully")
 })
 
 export { authRouter };
