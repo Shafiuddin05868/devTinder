@@ -51,8 +51,8 @@ export const userSchema = new mongoose.Schema(
     gender: {
       type: String,
       enum: {
-        values: ["male", "female", "other"],
-        message: "Gender must be male, female or other",
+        values: ["male", "female", "Third gender"],
+        message: "Gender must be male, female or Third gender",
       },
     },
     skills: {
