@@ -25,5 +25,5 @@ export const validateProfileUpdate = (req) => {
   const isValidOperation = updates.every((update) =>
     allowedUpdates.includes(update)
   );
-  return isValidOperation
+  return isValidOperation;
 };

@@ -11,7 +11,7 @@ export const userAuth = async (req, res, next) => {
             throw new Error("unauthorized")
         }else{
             const {id} = decoded
-            const user = await User.findById(id).select("-password")
+            const user = await User.findById(id)
             if(!user){
                 throw new Error("unauthorized")
             }
