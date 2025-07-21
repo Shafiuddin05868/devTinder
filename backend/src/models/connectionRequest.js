@@ -24,4 +24,13 @@ const connectionRequestionSchema = new Schema(
   }
 );
 
+connectionRequestionSchema.index({ senderId: 1, receiverId:1}, {unique: true})
+
+connectionRequestionSchema.pre("save", async function(next){
+  if (this.senderId.equals(this.receiverId)){
+    throw new Error("Sender and receiver cannot be the same")
+  }
+  next()
+})
+
 export const connectionRequest = new model("connectionRequest", connectionRequestionSchema)
