@@ -10,6 +10,12 @@ authRouter.post("/signUp", async (req, res) => {
   const user = new User(req.body)
   validate(req)
 
+  //if the user already exists
+  const existingUser = await User.findOne({email: user.email})
+  if (existingUser) {
+    return res.status(400).json({message: "user already exists"})
+  }
+
   bcrypt.hash(user.password, 10, async (err, hash) => {
     if (err) {
       return res.status(500).send("Internal server error")
