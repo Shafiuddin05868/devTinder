@@ -3,6 +3,8 @@ import { connectionRequest } from "../models/connectionRequest.js";
 import { userAuth } from "../middlewares/auth.js";
 const userRouter = express.Router();
 
+const user_public_fields = ["name", "photoUrl", "age", "email"];
+
 userRouter.get("/user/requests", userAuth, async (req, res) => {
   try {
     const user = req.user;
@@ -11,7 +13,7 @@ userRouter.get("/user/requests", userAuth, async (req, res) => {
         receiverId: user.id,
         status: "interested",
       })
-      .populate("senderId", "name photoUrl age");
+      .populate("senderId", user_public_fields);
     const data = requests.map((request) => ({
       requestId: request._id,
       senderId: request.senderId,
@@ -43,8 +45,8 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
           { receiverId: user.id, status: "accepted" },
         ],
       })
-      .populate("senderId", "name photoUrl age")
-      .populate("receiverId", "name photoUrl age");
+      .populate("senderId", user_public_fields)
+      .populate("receiverId", user_public_fields);
     const data = connections.map((connection) => connection.senderId || connection.receiverId);
 
     res.status(200).json({
