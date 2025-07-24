@@ -74,4 +74,33 @@ authRouter.post("/logout", (req, res) => {
   res.status(200).send("user logged out successfully")
 })
 
+//forget password without verification take email and password directly
+authRouter.patch("/forgetPassword", async (req, res) => {
+  try {
+    if (!req.body.email || !req.body.password) {
+      return res.status(400).send("email and password are required")
+    }
+    const user = await User.findOne({ email: req.body.email })
+    if (!user) {
+      return res.status(404).send("invalid credential")
+    }
+    bcrypt.hash(req.body.password, 10, async (err, hash)=> {
+      if (err) {
+        return res.status(500).send("Internal server error")
+      }
+      user.password = hash
+
+      try {
+        await user.save()
+        res.status(200).json({message: "password updated successfully"})
+      } catch (err) {
+        res.status(400).send(err.message)
+      }
+    })
+  } catch (err) {
+    res.status(500).send("internal server error: " + err.message)
+  }
+})
+
+
 export { authRouter };
