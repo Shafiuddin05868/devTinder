@@ -34,4 +34,4 @@ connectionRequestionSchema.pre("save", async function(next){
   next()
 })
 
-export const connectionRequest = new model("connectionRequest", connectionRequestionSchema)
+export const connectionRequest = mongoose.model("connectionRequest", connectionRequestionSchema)
