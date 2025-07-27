@@ -2,6 +2,7 @@ import express from "express"
 import { databaseConnect } from "./config/database.js"
 import cookieParser from "cookie-parser"
 import dotenv from "dotenv"
+import cors from "cors"
 
 dotenv.config()
 
@@ -15,6 +16,10 @@ const app = express()
 
 app.use(express.json())
 app.use(cookieParser())
+app.use(cors({
+  origin: process.env.FRONT_END_URL,
+  credentials: true,
+}))
 
 app.use("/", authRouter)
 app.use("/", profileRouter)
