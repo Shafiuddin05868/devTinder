@@ -1,3 +1,4 @@
+import NavBar from "~/component/NavBar";
 import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
@@ -8,7 +9,11 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  return <>
-    <h1>Hello</h1>
-  </>;
+  return (
+    <>
+      <NavBar/>
+
+      <h1>Hello</h1>
+    </>
+  );
 }
